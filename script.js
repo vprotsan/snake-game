@@ -9,10 +9,10 @@ jQuery(document).ready(function(){
         //   'x': 0,
         //   'y': 0
         // },
-        // {
-        //   'x': 1,
-        //   'y': 0
-        // },
+        {
+          'x': 1,
+          'y': 0
+        },
         {
           'x': 2,
           'y': 0
@@ -35,26 +35,33 @@ jQuery(document).ready(function(){
         },
   ];
 
+  context.fillStyle = '#228B22';
+  context.fillRect(0,0, width, height);
+  context.strokeStyle = "black";
+  context.strokeRect(0,0, width, height);
 
-  var gameLoop = setInterval(reDraw, 50);
 
-  function reDraw(){
-    console.log('redrawing');
-    drawBg();
-    drawSnake(snake);  
-  }
 
-  function drawBg(){
-    paint(0,0,width, height, 'white', 'black');  
-  }
-
+  // var gameLoop = setInterval(reDraw, 50);
+  //
+  // function reDraw(){
+  //   console.log('redrawing');
+  //   drawBg();
+  //   drawSnake(snake);
+  // }
+  //
+  // function drawBg(){
+  //   paint(0,0,width, height, 'white', 'black');
+  // }
+  //
   function drawSnake(snakeInput){
-    updateSnake(snakeInput);
+    // updateSnake(snakeInput);
     snakeInput.forEach(function(element){
       paint(element.x*10, element.y*10, snakeSize, snakeSize, 'orange', 'black');
     });
   }
 
+  //
   function paint(x, y, w, h, bgColor, borderColor){
     context.fillStyle = bgColor;
     context.fillRect(x,y, w, h);
@@ -62,12 +69,14 @@ jQuery(document).ready(function(){
     context.strokeRect(x,y, w, h);
   }
 
-  function updateSnake(snakeInput){
-    snakeInput.shift();
-    var cellX = snakeInput[snakeInput.length-1].x+1
-    var cellY = snakeInput[snakeInput.length-1].y
-    snakeInput.push({'x':cellX, y:cellY});
-  };
+  drawSnake(snake);
+  //
+  // function updateSnake(snakeInput){
+  //   snakeInput.shift();
+  //   var cellX = snakeInput[snakeInput.length-1].x+1
+  //   var cellY = snakeInput[snakeInput.length-1].y
+  //   snakeInput.push({'x':cellX, y:cellY});
+  // };
 
 
 
