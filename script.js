@@ -1,11 +1,13 @@
 jQuery(document).ready(function(){
-  var snakeCanvas = $('canvas.snake-game')[0];
+  var snakeCanvas = $('canvas.snake-game')[0],
       context     = snakeCanvas.getContext('2d'),
       width       = snakeCanvas.width,
       height      = snakeCanvas.height,
       snakeSize   = 10,
+      gameSpeed   = 150,
       direction   = 'right',
-      snake = [ {'x': 1,'y': 0 },
+      score       = 0,
+      snake       = [ {'x': 1,'y': 0 },
                 {'x': 2,'y': 0 },
                 {'x': 3,'y': 0 },
                 {'x': 4,'y': 0 },
@@ -13,12 +15,71 @@ jQuery(document).ready(function(){
                 {'x': 6,'y': 0 }
               ];
 
-  var gameLoop = setInterval(reDraw, 50);
+  var foodX, foodY, gameLoop;
+  start();
+
+  function start(){
+    createNewFood();
+    gameLoop = setInterval(reDraw, gameSpeed);
+  }
+
+  function stop(){
+    clearInterval(gameLoop);
+  }
+
+  function createNewFood(){
+    foodX = parseInt(Math.random()* width / snakeSize);
+    foodY = parseInt(Math.random()* height / snakeSize);
+  }
+
+  function checkCollision(snakeInput, foodXinput, foodYinput){
+    var collision = 'nothing';
+
+    snakeInput.every(function(element){
+      if(element.x === foodXinput && element.y === foodYinput){
+        collision = 'food';
+        return false;
+      } else if (element.x === -1 ||
+                 element.y === -1 ||
+                 element.x === width/snakeSize ||
+                 element.y === height/snakeSize) {
+        collision = 'wall';
+        return false;
+      } else {
+        return true;
+      }
+    })
+
+    return collision;
+  }
 
   function reDraw(){
     console.log('redrawing');
     drawBg();
     drawSnake(snake);
+    drawFood();
+    drawScore();
+
+    var collisionStatus = checkCollision(snake, foodX, foodY);
+    if(collisionStatus == 'food'){
+      score++;
+      createNewFood();
+      snake.unshift(updateDirection(snake, direction));
+    }else if (collisionStatus == 'wall') {
+      stop();
+      score = 0;
+    } else {
+      console.log(collisionStatus);
+    }
+  }
+
+  function drawFood(){
+    paint(foodX * snakeSize, foodY * snakeSize, snakeSize, snakeSize, '#ffffff', '#000000');
+  }
+
+  function drawScore(){
+    context.fillStyle = "pink";
+    context.fillText('Score:' + score, 5, height - 5);
   }
 
   function drawBg(){
@@ -61,23 +122,14 @@ jQuery(document).ready(function(){
   }
 
   $(document).on('keydown', function(e){
-    if(e.which == '37'){ //left down
+    if(e.which == '37' && direction != 'right'){ //left down
       direction = 'left';
-    }else if (e.which == '38') { //top key
+    }else if (e.which == '38' && direction != 'bottom') { //top key
       direction = 'top';
-    }else if (e.which == '39') { //right keydown
+    }else if (e.which == '39' && direction != 'left') { //right keydown
       direction = 'right';
-    }else if (e.which == '40') { //bottom keybottom
+    }else if (e.which == '40' && direction != 'top') { //bottom keybottom
       direction = 'bottom';
     }
   })
-
-
-
-
-
-
-
-
-
 });
